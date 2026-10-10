@@ -1,32 +1,419 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bonjour</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <style>
-    body {
-      margin: 0;
-      background-color: #000;
-      color: #fff;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: -apple-system, sans-serif;
-    }
-    h1 { font-size: 3.5rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>BlabDev Admin</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BlabDev Admin">
+<meta name="theme-color" content="#000000">
+<meta name="format-detection" content="telephone=no">
+<style>
+:root{--bg:#000;--card:#0d0e10;--line:#232629;--tx:#ecedee;--sub:#80868b;--ac:#8b9bff;--danger:#ff5a66;--ok:#4cd98a;--top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px);--f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--f);overscroll-behavior:none}
+body{-webkit-user-select:none;user-select:none}
+input,textarea,select{-webkit-user-select:text;user-select:text}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.hidden{display:none!important}
+button{font-family:var(--f);color:inherit;border:0;background:none;cursor:pointer}
+button:active{opacity:.6}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border-radius:14px;background:var(--ac);color:#0a0c1f;font-weight:700;font-size:16px}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--tx)}
+.btn.red{background:transparent;border:1px solid #4a1f25;color:var(--danger)}
+.btn:disabled{opacity:.5}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:13px;color:var(--sub);margin-bottom:6px;font-weight:600}
+.inp{width:100%;min-height:48px;padding:12px 14px;font-size:16px;font-family:var(--f);color:var(--tx);background:var(--card);border:1px solid var(--line);border-radius:12px;outline:none;appearance:none;-webkit-appearance:none}
+.inp:focus{border-color:var(--ac)}
+textarea.inp{min-height:110px;resize:none}
+
+/* Connexion */
+#login,#hub{height:100dvh;overflow-y:auto;padding:calc(var(--top) + 48px) 22px calc(var(--bot) + 24px)}
+.brand{font-size:30px;font-weight:800;letter-spacing:-.8px}
+.brand small{display:inline-block;margin-left:8px;padding:3px 9px;border-radius:99px;background:rgba(139,155,255,.14);color:var(--ac);font-size:12px;font-weight:700;letter-spacing:0;vertical-align:middle}
+.lead{color:var(--sub);font-size:15px;line-height:1.45;margin:8px 0 28px}
+#srv-hint{font-size:12px;color:var(--sub);margin-top:6px}
+.ios-tip{display:flex;gap:12px;align-items:flex-start;margin-top:24px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card);font-size:13px;line-height:1.5;color:var(--sub)}
+.ios-tip b{color:var(--tx)}
+.ios-tip svg{color:var(--ac);margin-top:1px}
+
+/* App */
+#app{height:100dvh;display:flex;flex-direction:column}
+.bar{padding:calc(var(--top) + 10px) 18px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:rgba(0,0,0,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);flex-shrink:0}
+.bar h1{font-size:20px;font-weight:800;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-act{display:flex;gap:4px}
+.ib{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--sub)}
+.ib.fill{background:var(--ac);color:#0a0c1f}
+main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--bot) + 84px)}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;padding:6px 8px calc(var(--bot) + 6px);background:rgba(0,0,0,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11px;font-weight:600;color:var(--sub)}
+.tab.on{color:var(--ac)}
+.stats{display:flex;gap:10px;padding:14px 16px 4px}
+.stat{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.stat b{display:block;font-size:22px;letter-spacing:-.5px}
+.stat span{font-size:12px;color:var(--sub)}
+.empty{padding:48px 24px;text-align:center;color:var(--sub);font-size:14px;line-height:1.5}
+.post{padding:16px;border-bottom:1px solid var(--line)}
+.post h3{font-size:16px;font-weight:700;margin-bottom:3px;word-break:break-word}
+.meta{font-size:12px;color:var(--sub)}
+.post p{margin:10px 0;font-size:15px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.post img.pic{width:100%;max-height:300px;object-fit:cover;border-radius:12px;border:1px solid var(--line);margin-bottom:8px}
+.row-act{display:flex;gap:8px;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:99px;border:1px solid var(--line);font-size:13px;font-weight:600}
+.chip.red{color:var(--danger);border-color:#4a1f25}
+.member{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.av{width:42px;height:42px;border-radius:50%;background:#1b1d22;object-fit:cover;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--ac);flex-shrink:0}
+.mi{flex:1;min-width:0}
+.mi b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{font-size:11px;font-weight:700;color:var(--ac)}
+.pill.t{color:#ffb454}
+.member select{width:auto;min-height:38px;padding:6px 10px;font-size:14px}
+.sect{padding:20px 16px 8px;font-size:13px;color:var(--sub);font-weight:700}
+.pad{padding:0 16px 8px}
+.srv{display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+
+/* Feuilles */
+.veil{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;display:flex;align-items:flex-end}
+.sheet{width:100%;max-height:92dvh;overflow-y:auto;background:#101113;border-radius:22px 22px 0 0;border-top:1px solid var(--line);padding:10px 18px calc(var(--bot) + 18px);animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.grab{width:38px;height:4px;border-radius:2px;background:#33363b;margin:0 auto 14px}
+.sheet h2{font-size:19px;font-weight:800;margin-bottom:16px}
+.two{display:flex;gap:10px}
+#toast{position:fixed;left:50%;top:calc(var(--top) + 12px);transform:translate(-50%,-90px);max-width:90%;padding:11px 18px;border-radius:99px;background:#1c1e22;border:1px solid var(--line);font-size:14px;font-weight:600;z-index:99;transition:transform .25s}
+#toast.show{transform:translate(-50%,0)}
+#toast.err{color:var(--danger)}
+#toast.ok{color:var(--ok)}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}#toast{transition:none}}
+</style>
 </head>
 <body>
-  <h1>Bonjour</h1>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="note" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+<symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+<symbol id="edit" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+<symbol id="trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+<symbol id="share" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></symbol>
+<symbol id="out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+</defs></svg>
+
+<div id="toast"></div>
+
+<!-- CONNEXION -->
+<section id="login" class="hidden">
+  <div class="brand">BlabDev<small>Admin</small></div>
+  <p class="lead">Espace réservé aux administrateurs de serveur.</p>
+  <form id="f-login" autocomplete="off">
+    <div class="fld"><label for="l-srv">ID du serveur</label><input id="l-srv" class="inp" placeholder="ex : k3x9pq2m" autocapitalize="none" autocorrect="off" spellcheck="false"><p id="srv-hint"></p></div>
+    <div class="fld"><label for="l-usr">Identifiant</label><input id="l-usr" class="inp" required autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+    <div class="fld"><label for="l-pwd">Mot de passe</label><input id="l-pwd" type="password" class="inp" required></div>
+    <button class="btn" id="l-btn" type="submit">Se connecter</button>
+  </form>
+  <div id="ios-tip" class="ios-tip hidden">
+    <svg class="i"><use href="#share"/></svg>
+    <div>Pour l'installer sur iPhone : touchez <b>Partager</b> dans Safari, puis <b>Sur l'écran d'accueil</b>.</div>
+  </div>
+</section>
+
+<!-- HUB (Fufu) -->
+<section id="hub" class="hidden">
+  <div class="brand">Serveurs</div>
+  <p class="lead">Choisissez le serveur à administrer.</p>
+  <div id="hub-list"></div>
+  <button class="btn red" id="hub-out" style="margin-top:24px">Déconnexion</button>
+</section>
+
+<!-- APP -->
+<section id="app" class="hidden">
+  <header class="bar">
+    <h1 id="app-title">Notes</h1>
+    <div class="bar-act">
+      <button class="ib hidden" id="b-hub" aria-label="Serveurs"><svg class="i"><use href="#back"/></svg></button>
+      <button class="ib fill" id="b-add" aria-label="Ajouter"><svg class="i"><use href="#plus"/></svg></button>
+    </div>
+  </header>
+  <main>
+    <div id="v-posts"><div class="stats" id="stats"></div><div id="posts"></div></div>
+    <div id="v-members" class="hidden"><div id="members"></div></div>
+    <div id="v-settings" class="hidden">
+      <div class="sect">Serveur</div>
+      <div class="pad">
+        <div class="fld"><label>ID du serveur</label><input id="s-id" class="inp" readonly></div>
+        <div class="fld"><label>Lien d'invitation</label><input id="s-inv" class="inp" readonly></div>
+        <button class="btn ghost" id="b-copy">Copier le lien</button>
+      </div>
+      <div class="sect">Session</div>
+      <div class="pad"><p class="meta" style="margin-bottom:12px" id="s-me"></p><button class="btn red" id="b-out"><svg class="i"><use href="#out"/></svg>Déconnexion</button></div>
+    </div>
+  </main>
+  <nav class="tabs">
+    <button class="tab on" data-tab="posts"><svg class="i"><use href="#note"/></svg>Notes</button>
+    <button class="tab" data-tab="members"><svg class="i"><use href="#users"/></svg>Membres</button>
+    <button class="tab" data-tab="settings"><svg class="i"><use href="#gear"/></svg>Réglages</button>
+  </nav>
+</section>
+
+<!-- Feuille : note -->
+<div id="sh-post" class="veil hidden"><div class="sheet">
+  <div class="grab"></div><h2 id="sp-title">Nouvelle note</h2>
+  <form id="f-post">
+    <input type="hidden" id="p-id">
+    <div class="fld"><label for="p-t">Titre</label><input id="p-t" class="inp" required></div>
+    <div class="fld"><label for="p-c">Contenu</label><textarea id="p-c" class="inp" required></textarea></div>
+    <div class="fld" id="p-img-w"><label for="p-img">Image (2 Mo max)</label><input id="p-img" type="file" accept="image/*" class="inp"></div>
+    <div class="two"><button type="button" class="btn ghost" data-close>Annuler</button><button class="btn" id="p-btn" type="submit">Publier</button></div>
+  </form>
+</div></div>
+
+<!-- Feuille : membre -->
+<div id="sh-member" class="veil hidden"><div class="sheet">
+  <div class="grab"></div><h2>Nouveau membre</h2>
+  <form id="f-member" autocomplete="off">
+    <div class="fld"><label for="m-n">Identifiant (unique sur tout le site)</label><input id="m-n" class="inp" required maxlength="24" autocapitalize="none" autocorrect="off"></div>
+    <div class="fld"><label for="m-p">Mot de passe provisoire</label><input id="m-p" class="inp" required minlength="4"></div>
+    <div class="fld"><label for="m-r">Rôle</label><select id="m-r" class="inp"><option value="user">Membre</option><option value="mod">Modérateur</option></select></div>
+    <div class="two"><button type="button" class="btn ghost" data-close>Annuler</button><button class="btn" type="submit">Créer</button></div>
+  </form>
+</div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script>
+// ---- Environnement iOS ----
+const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const STANDALONE = window.navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+document.documentElement.classList.toggle('ios', IS_IOS);
+if (IS_IOS && !STANDALONE) document.getElementById('ios-tip').classList.remove('hidden');
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+// Empêche le zoom par pincement / double-tap sur iOS
+['gesturestart', 'gesturechange'].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
+
+firebase.initializeApp({
+  apiKey: "AIzaSyCXBMp-VV2So32y6mPpaTXQcsmi8_3n5Eg", authDomain: "pedcpm.firebaseapp.com",
+  databaseURL: "https://pedcpm-default-rtdb.firebaseio.com", projectId: "pedcpm",
+  storageBucket: "pedcpm.firebasestorage.app", messagingSenderId: "509891023769", appId: "1:509891023769:web:7d7f7601198f94e6fcb908"
+});
+const db = firebase.database();
+const $ = id => document.getElementById(id);
+const SKEY = 'blabdev_admin_session';
+let me = null, meData = null, srv = null, srvData = null, users = {}, posts = {}, usersRef = null, postsRef = null, tab = 'posts';
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const isFufu = () => me === 'Fufu';
+const base = () => 'servers/' + srv;
+const inviteLink = id => location.origin + location.pathname + '?s=' + id;
+let tt; function toast(msg, kind) { const t = $('toast'); t.textContent = msg; t.className = 'show ' + (kind || ''); clearTimeout(tt); tt = setTimeout(() => t.className = '', 2600); }
+const fileB64 = f => new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = ko; r.readAsDataURL(f); });
+const saveSess = (u, s) => { try { localStorage.setItem(SKEY, JSON.stringify({ u, s })); } catch (e) {} };
+const clearSess = () => { try { localStorage.removeItem(SKEY); } catch (e) {} };
+const getSess = () => { try { return JSON.parse(localStorage.getItem(SKEY)); } catch (e) { return null; } };
+const NAME_RE = /^[\p{L}\p{N}_-]{2,24}$/u;
+
+function show(id) { ['login', 'hub', 'app'].forEach(s => $(s).classList.toggle('hidden', s !== id)); }
+function openSheet(id) { $(id).classList.remove('hidden'); }
+function closeSheets() { document.querySelectorAll('.veil').forEach(v => v.classList.add('hidden')); }
+document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeSheets));
+document.querySelectorAll('.veil').forEach(v => v.addEventListener('click', e => { if (e.target === v) closeSheets(); }));
+
+async function getServer(sid) {
+  if (!/^[a-z0-9]{4,16}$/.test(sid || '')) return null;
+  const s = await db.ref('serverIndex/' + sid).once('value');
+  return s.exists() ? s.val() : null;
+}
+function detach() { if (usersRef) usersRef.off(); if (postsRef) postsRef.off(); usersRef = postsRef = null; }
+function logout() { detach(); me = meData = srv = srvData = null; clearSess(); show('login'); }
+
+// ---- Connexion (admins uniquement) ----
+$('f-login').addEventListener('submit', async e => {
+  e.preventDefault();
+  const sid = $('l-srv').value.trim().toLowerCase(), uname = $('l-usr').value.trim(), pass = $('l-pwd').value.trim();
+  const btn = $('l-btn'); btn.disabled = true;
+  try {
+    if (uname.toLowerCase() === 'fufu') {
+      const s = await db.ref('users/Fufu').once('value');
+      if (!s.exists() || String(s.val().password) !== pass) return toast('Identifiants incorrects', 'err');
+      me = 'Fufu'; meData = { ...s.val(), role: 'admin' };
+      if (sid) { srvData = await getServer(sid); if (!srvData) { me = null; return toast('Serveur introuvable', 'err'); } srv = sid; saveSess('Fufu', sid); enter(); }
+      else { saveSess('Fufu', null); hub(); }
+      return;
     }
-  </script>
+    if (!sid) return toast("Entrez l'ID du serveur", 'err');
+    if (!NAME_RE.test(uname)) return toast('Utilisateur introuvable', 'err');
+    const nm = await db.ref('names/' + uname.toLowerCase()).once('value');
+    if (!nm.exists() || nm.val().server !== sid) return toast('Utilisateur introuvable sur ce serveur', 'err');
+    const exact = nm.val().user, sd = await getServer(sid);
+    if (!sd) return toast('Serveur introuvable', 'err');
+    const us = await db.ref('servers/' + sid + '/users/' + exact).once('value');
+    if (!us.exists() || String(us.val().password) !== pass) return toast('Identifiants incorrects', 'err');
+    if (us.val().role !== 'admin') return toast('Accès réservé aux administrateurs', 'err');
+    me = exact; meData = us.val(); srv = sid; srvData = sd; saveSess(exact, sid); enter();
+  } catch (err) { toast('Erreur : ' + err.message, 'err'); }
+  finally { btn.disabled = false; }
+});
+
+// ---- Hub (créateur du site) ----
+async function hub() {
+  detach(); srv = srvData = null; show('hub');
+  const box = $('hub-list'); box.innerHTML = '<p class="empty">Chargement…</p>';
+  try {
+    const snap = await db.ref('serverIndex').once('value');
+    if (!snap.exists()) { box.innerHTML = '<p class="empty">Aucun serveur pour le moment.</p>'; return; }
+    let h = ''; snap.forEach(c => { const v = c.val(); h += `<button class="srv" data-sid="${esc(c.key)}"><span><b>${esc(v.name)}</b><br><span class="meta">${esc(c.key)} · admin : ${esc(v.owner)}</span></span></button>`; });
+    box.innerHTML = h;
+  } catch (e) { box.innerHTML = '<p class="empty">Erreur de chargement.</p>'; }
+}
+$('hub-list').addEventListener('click', async e => {
+  const b = e.target.closest('[data-sid]'); if (!b) return;
+  srvData = await getServer(b.dataset.sid); if (!srvData) return toast('Serveur introuvable', 'err');
+  srv = b.dataset.sid; saveSess('Fufu', srv); enter();
+});
+$('hub-out').addEventListener('click', logout);
+$('b-hub').addEventListener('click', () => { saveSess('Fufu', null); hub(); });
+
+// ---- Application ----
+function enter() {
+  detach(); show('app');
+  $('b-hub').classList.toggle('hidden', !isFufu());
+  $('s-id').value = srv; $('s-inv').value = inviteLink(srv);
+  $('s-me').textContent = 'Connecté : ' + me + ' · ' + (srvData ? srvData.name : '');
+  usersRef = db.ref(base() + '/users');
+  usersRef.on('value', s => { users = s.val() || {}; renderMembers(); renderStats(); renderPosts(); });
+  postsRef = db.ref(base() + '/posts').orderByChild('timestamp');
+  postsRef.on('value', s => { posts = {}; s.forEach(c => { posts[c.key] = c.val(); }); renderPosts(); renderStats(); });
+  setTab('posts');
+}
+const TITLES = { posts: 'Notes', members: 'Membres', settings: 'Réglages' };
+function setTab(t) {
+  tab = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  ['posts', 'members', 'settings'].forEach(v => $('v-' + v).classList.toggle('hidden', v !== t));
+  $('app-title').textContent = t === 'posts' && srvData ? srvData.name : TITLES[t];
+  $('b-add').classList.toggle('hidden', t === 'settings');
+  document.querySelector('main').scrollTop = 0;
+}
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+$('b-add').addEventListener('click', () => { tab === 'members' ? openSheet('sh-member') : openPost(); });
+$('b-out').addEventListener('click', logout);
+$('b-copy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('s-inv').value); toast('Lien copié', 'ok'); }
+  catch (e) { $('s-inv').select(); toast('Sélectionné : copiez le lien', ''); }
+});
+
+function renderStats() {
+  const ks = Object.keys(users);
+  $('stats').innerHTML = `<div class="stat"><b>${Object.keys(posts).length}</b><span>Notes</span></div><div class="stat"><b>${ks.length}</b><span>Membres</span></div><div class="stat"><b>${ks.filter(k => users[k].role === 'mod').length}</b><span>Modérateurs</span></div>`;
+}
+function renderPosts() {
+  const ids = Object.keys(posts).sort((a, b) => posts[b].timestamp - posts[a].timestamp);
+  if (!ids.length) { $('posts').innerHTML = '<p class="empty">Aucune note.<br>Touchez + pour en publier une.</p>'; return; }
+  $('posts').innerHTML = ids.map(id => {
+    const p = posts[id];
+    return `<article class="post"><h3>${esc(p.title)}</h3><div class="meta">${esc(p.author)} · ${new Date(p.timestamp).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</div><p>${esc(p.content)}</p>${p.imageData ? `<img class="pic" src="${p.imageData}" alt="">` : ''}<div class="row-act"><button class="chip" data-edit="${id}"><svg class="i" style="width:15px;height:15px"><use href="#edit"/></svg>Modifier</button><button class="chip red" data-del="${id}"><svg class="i" style="width:15px;height:15px"><use href="#trash"/></svg>Supprimer</button></div></article>`;
+  }).join('');
+}
+$('posts').addEventListener('click', async e => {
+  const ed = e.target.closest('[data-edit]'), dl = e.target.closest('[data-del]');
+  if (ed) openPost(ed.dataset.edit);
+  if (dl && confirm('Supprimer cette note ?')) {
+    try { await db.ref(base() + '/posts/' + dl.dataset.del).remove(); toast('Note supprimée', 'ok'); } catch (err) { toast(err.message, 'err'); }
+  }
+});
+function openPost(id) {
+  const p = id ? posts[id] : null;
+  $('sp-title').textContent = p ? 'Modifier la note' : 'Nouvelle note';
+  $('p-id').value = id || ''; $('p-t').value = p ? p.title : ''; $('p-c').value = p ? p.content : '';
+  $('p-img').value = ''; $('p-img-w').classList.toggle('hidden', !!p);
+  $('p-btn').textContent = p ? 'Enregistrer' : 'Publier';
+  openSheet('sh-post');
+}
+$('f-post').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('p-id').value, btn = $('p-btn'); btn.disabled = true;
+  try {
+    if (id) await db.ref(base() + '/posts/' + id).update({ title: $('p-t').value, content: $('p-c').value });
+    else {
+      const f = $('p-img').files[0]; let img = null;
+      if (f) { if (f.size > 2 * 1024 * 1024) return toast('Image trop lourde (2 Mo max)', 'err'); img = await fileB64(f); }
+      await db.ref(base() + '/posts').push().set({ title: $('p-t').value, content: $('p-c').value, imageData: img, author: me, timestamp: Date.now() });
+    }
+    closeSheets(); toast(id ? 'Note modifiée' : 'Note publiée', 'ok');
+  } catch (err) { toast('Erreur : ' + err.message, 'err'); }
+  finally { btn.disabled = false; }
+});
+
+// ---- Membres ----
+const ROLES = { admin: 'Administrateur', mod: 'Modérateur', user: 'Membre' };
+function renderMembers() {
+  const ks = Object.keys(users);
+  if (!ks.length) { $('members').innerHTML = '<p class="empty">Aucun membre.</p>'; return; }
+  $('members').innerHTML = ks.map(k => {
+    const u = users[k], adm = u.role === 'admin';
+    const av = u.avatarUrl ? `<img class="av" src="${u.avatarUrl}" alt="">` : `<div class="av">${esc(k.charAt(0).toUpperCase())}</div>`;
+    const act = adm ? '' : `<select class="inp" data-role="${esc(k)}"><option value="user"${u.role === 'user' ? ' selected' : ''}>Membre</option><option value="mod"${u.role === 'mod' ? ' selected' : ''}>Modo</option></select><button class="ib" data-rm="${esc(k)}" aria-label="Supprimer"><svg class="i"><use href="#trash"/></svg></button>`;
+    return `<div class="member">${av}<div class="mi"><b>${esc(k)}</b><span class="pill ${u.isTemporary ? 't' : ''}">${u.isTemporary ? 'Mot de passe provisoire' : ROLES[u.role] || 'Membre'}</span></div>${act}</div>`;
+  }).join('');
+}
+$('members').addEventListener('change', async e => {
+  const s = e.target.closest('[data-role]'); if (!s) return;
+  try { await db.ref(base() + '/users/' + s.dataset.role).update({ role: s.value }); toast('Rôle mis à jour', 'ok'); } catch (err) { toast(err.message, 'err'); }
+});
+$('members').addEventListener('click', async e => {
+  const b = e.target.closest('[data-rm]'); if (!b) return;
+  const k = b.dataset.rm;
+  if (!confirm('Supprimer le membre « ' + k + ' » ?')) return;
+  try {
+    await db.ref(base() + '/users/' + k).remove();
+    await db.ref('names/' + k.toLowerCase()).remove();
+    toast('Membre supprimé', 'ok');
+  } catch (err) { toast(err.message, 'err'); }
+});
+$('f-member').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('m-n').value.trim(), pw = $('m-p').value.trim(), role = $('m-r').value;
+  if (!NAME_RE.test(name) || name.toLowerCase() === 'fufu') return toast('Nom invalide (2–24 : lettres, chiffres, _ -)', 'err');
+  let claimed = false;
+  try {
+    const r = await db.ref('names/' + name.toLowerCase()).transaction(c => c === null ? { server: srv, user: name } : undefined);
+    claimed = r.committed;
+    if (!claimed) return toast('Ce nom est déjà pris', 'err');
+    await db.ref(base() + '/users/' + name).set({ user: name, password: pw, role, isTemporary: true, createdAt: Date.now() });
+    $('f-member').reset(); closeSheets(); toast('Membre « ' + name + ' » créé', 'ok');
+  } catch (err) {
+    if (claimed) db.ref('names/' + name.toLowerCase()).remove();
+    toast('Erreur : ' + err.message, 'err');
+  }
+});
+
+// ---- Démarrage : invitation + reconnexion ----
+(async () => {
+  const inv = (new URLSearchParams(location.search).get('s') || '').toLowerCase();
+  if (inv) {
+    $('l-srv').value = inv;
+    try { const s = await getServer(inv); $('srv-hint').textContent = s ? 'Serveur : ' + s.name : 'Serveur introuvable.'; } catch (e) {}
+  }
+  const ss = getSess();
+  if (!ss || !ss.u) return show('login');
+  try {
+    if (ss.u === 'Fufu') {
+      const f = await db.ref('users/Fufu').once('value');
+      if (!f.exists()) { clearSess(); return show('login'); }
+      me = 'Fufu'; meData = { ...f.val(), role: 'admin' };
+      if (ss.s && (srvData = await getServer(ss.s))) { srv = ss.s; enter(); } else hub();
+    } else {
+      const sd = ss.s && await getServer(ss.s), us = sd && await db.ref('servers/' + ss.s + '/users/' + ss.u).once('value');
+      if (!us || !us.exists() || us.val().role !== 'admin') { clearSess(); return show('login'); }
+      me = ss.u; meData = us.val(); srv = ss.s; srvData = sd; enter();
+    }
+  } catch (e) { show('login'); }
+})();
+</script>
 </body>
 </html>
