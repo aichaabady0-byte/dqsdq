@@ -77,9 +77,9 @@ textarea.inp{min-height:110px;resize:none}
 .nb.on{max-height:48px;padding:11px 18px}
 .nb.off{background:#2a1a1d;color:#ff9aa2}
 .nb.ok{background:#12281d;color:var(--ok)}
-main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none;padding-bottom:calc(var(--bot) + 92px)}
+main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none;padding-bottom:calc(var(--bot)*.4 + 84px)}
 #ptr{height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--sub);transition:height .2s}
-.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;padding:6px max(10px,var(--r)) calc(var(--bot) + 4px) max(10px,var(--l));background:rgba(0,0,0,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;padding:6px max(10px,var(--r)) calc(var(--bot)*.4 + 2px) max(10px,var(--l));background:rgba(0,0,0,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;font-size:11px;font-weight:600;color:var(--sub)}
 .ti{padding:5px 20px;border-radius:99px;display:flex;transition:background .2s}
 .tab.on{color:var(--ac)}.tab.on .ti{background:rgba(139,155,255,.16)}
